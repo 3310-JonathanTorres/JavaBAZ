@@ -1,4 +1,4 @@
-package com.wizeline.model;
+package com.wizeline.DTO;
 
 public class ResponseBean {
     /**
