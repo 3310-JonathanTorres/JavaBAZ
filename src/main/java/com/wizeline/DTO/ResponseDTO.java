@@ -1,6 +1,6 @@
 package com.wizeline.DTO;
 
-public class ResponseBean {
+public class ResponseDTO {
     /**
      * Attribute status: Guarda el resultado del request, posibles valores success o fail.
      */
@@ -9,15 +9,11 @@ public class ResponseBean {
      * Attribute code: Guarda el codigo de la operacion realizada o error.
      */
     private String code;
-    /**
-     * Attribute data: Guardar el resultado de la consulta realizada.
-     */
-    private Object result;
 
     /**
      * Attribute error: Bean que maneja un listado de errores presentados en durante el procesamiento de request.
      */
-    private ErrorBean errors = new ErrorBean();
+    private ErrorDTO errors = new ErrorDTO();
 
     public String getStatus() {
         return status;
@@ -35,19 +31,11 @@ public class ResponseBean {
         this.code = code;
     }
 
-    public Object getResult() {
-        return result;
-    }
-
-    public void setResult(Object result) {
-        this.result = result;
-    }
-
-    public ErrorBean getErrors() {
+    public ErrorDTO getErrors() {
         return errors;
     }
 
-    public void setErrors(ErrorBean errors) {
+    public void setErrors(ErrorDTO errors) {
         this.errors = errors;
     }
 }

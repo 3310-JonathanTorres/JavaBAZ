@@ -1,9 +1,11 @@
 package com.wizeline.BO;
 
+import com.wizeline.DTO.ResponseDTO;
+
 public interface UserBO {
 
-	String createUser(String user, String password);
+	ResponseDTO createUser(String user, String password);
 	
-	String login(String user, String password);
+	ResponseDTO login(String user, String password);
 	
 }
