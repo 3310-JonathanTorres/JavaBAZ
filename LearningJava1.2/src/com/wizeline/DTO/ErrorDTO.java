@@ -1,6 +1,6 @@
-package com.wizeline.model;
+package com.wizeline.DTO;
 
-public class ErrorBean {
+public class ErrorDTO {
     /**
      ** Attribute errorCode: Save error code id
 	 */
@@ -9,8 +9,19 @@ public class ErrorBean {
      * Attribute message: Save error message
      */
     String message;
+    
 
-    public String getErrorCode() {
+    public ErrorDTO() {
+		super();
+	}
+
+	public ErrorDTO(String errorCode, String message) {
+		super();
+		this.errorCode = errorCode;
+		this.message = message;
+	}
+
+	public String getErrorCode() {
         return errorCode;
     }
 
