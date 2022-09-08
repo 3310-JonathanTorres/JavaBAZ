@@ -7,9 +7,11 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpServer;
@@ -136,6 +138,35 @@ public class LearningJava {
 					exchange.getResponseHeaders().add("Content-type", "application/json");
 					exchange.sendResponseHeaders(400, responseText.getBytes().length);
 				}
+			} else {
+				/** 405 Method Not Allowed */
+				exchange.sendResponseHeaders(405, -1);
+			}
+			OutputStream output = exchange.getResponseBody();
+			/**
+			 * Always remember to close the resources you open.
+			 * Avoid memory leaks
+			 */
+			LOGGER.info("LearningJava - Cerrando recursos ...");
+			output.write(responseText.getBytes());
+			output.flush();
+			output.close();
+			exchange.close();
+		}));
+		// Consultar información de todas las cuentas
+		server.createContext("/api/getAccounts", (exchange -> {
+			LOGGER.info("LearningJava - Inicia procesamiento de peticion ...");
+			BankAccountBO bankAccountBO = new BankAccountBOImpl();
+
+			String responseText = "";
+			/** Validates the type of http request  */
+			if ("GET".equals(exchange.getRequestMethod())) {
+				LOGGER.info("LearningJava - Procesando peticion HTTP de tipo GET");
+				List<BankAccountDTO> accounts = bankAccountBO.getAccounts();
+				JSONArray json = new JSONArray(accounts);
+				responseText = json.toString();
+				exchange.getResponseHeaders().add("Content-type", "application/json");
+				exchange.sendResponseHeaders(200, responseText.getBytes().length);
 			} else {
 				/** 405 Method Not Allowed */
 				exchange.sendResponseHeaders(405, -1);
