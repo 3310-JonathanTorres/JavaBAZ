@@ -13,8 +13,11 @@ import java.util.logging.Logger;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpServer;
+import com.wizeline.BO.BankAccountBO;
+import com.wizeline.BO.BankAccountBOImpl;
 import com.wizeline.BO.UserBO;
 import com.wizeline.BO.UserBOImpl;
+import com.wizeline.DTO.BankAccountDTO;
 import com.wizeline.DTO.ResponseDTO;
 import com.wizeline.DTO.UserDTO;
 
@@ -25,6 +28,7 @@ import com.wizeline.DTO.UserDTO;
 public class LearningJava {
     
 	private static final Logger LOGGER = Logger.getLogger(LearningJava.class.getName());
+	private static String SUCCESS_CODE = "OK000";
 	
 	/**
 	 * Descripcion: Metodo principal de del proyecto LearningJava
@@ -94,6 +98,40 @@ public class LearningJava {
             output.close();
             exchange.close();
         }));
+		// Consultar información de cuenta de un usuario
+		server.createContext("/api/getUserAccount", (exchange -> {
+			LOGGER.info("LearningJava - Inicia procesamiento de peticion ...");
+			ResponseDTO response = new ResponseDTO();
+
+			String responseText = "";
+			/** Validates the type of http request  */
+			if ("GET".equals(exchange.getRequestMethod())) {
+				LOGGER.info("LearningJava - Procesando peticion HTTP de tipo GET");
+				UserDTO user =  new UserDTO();
+				user = user.getParameters(splitQuery(exchange.getRequestURI()));
+				response = login(user.getUser(), user.getPassword());
+				if (response.getCode().equals(SUCCESS_CODE)) {
+					BankAccountDTO bankAccountDTO = getAccountDetails(user.getUser());
+					JSONObject json = new JSONObject(bankAccountDTO);
+					responseText = json.toString();
+					exchange.getResponseHeaders().add("Content-type", "application/json");
+					exchange.sendResponseHeaders(200, responseText.getBytes().length);
+				}
+			} else {
+				/** 405 Method Not Allowed */
+				exchange.sendResponseHeaders(405, -1);
+			}
+			OutputStream output = exchange.getResponseBody();
+			/**
+			 * Always remember to close the resources you open.
+			 * Avoid memory leaks
+			 */
+			LOGGER.info("LearningJava - Cerrando recursos ...");
+			output.write(responseText.getBytes());
+			output.flush();
+			output.close();
+			exchange.close();
+		}));
         
         /** creates a default executor */
         server.setExecutor(null); 
@@ -122,5 +160,10 @@ public class LearningJava {
 	        query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
 	    }
 	    return query_pairs;
+	}
+
+	private static BankAccountDTO getAccountDetails(String user) {
+		BankAccountBO bankAccountBO = new BankAccountBOImpl();
+		return bankAccountBO.getAccountDetails(user);
 	}
 }
