@@ -27,6 +27,8 @@ public class BankAccountDTO {
 
     private boolean accountActive;
 
+    private String lastUsage;
+
     public long getAccountNumber() {
         return accountNumber;
     }
@@ -81,5 +83,13 @@ public class BankAccountDTO {
 
     public void setAccountActive(boolean accountActive) {
         this.accountActive = accountActive;
+    }
+
+    public String getLastUsage() {
+        return lastUsage;
+    }
+
+    public void setLastUsage(String lastUsage) {
+        this.lastUsage = lastUsage;
     }
 }

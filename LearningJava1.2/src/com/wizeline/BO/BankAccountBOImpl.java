@@ -15,12 +15,12 @@ import com.wizeline.enums.AccountType;
 public class BankAccountBOImpl implements BankAccountBO{
 
     @Override
-    public BankAccountDTO getAccountDetails(String user) {
-        return buildBankAccount(user, true);
+    public BankAccountDTO getAccountDetails(String user, String lastUsage) {
+        return buildBankAccount(user, true, lastUsage);
     }
 
     // Creación de tipo de dato BankAccount
-    private BankAccountDTO buildBankAccount(String user, boolean isActive) {
+    private BankAccountDTO buildBankAccount(String user, boolean isActive, String lastUsage) {
         BankAccountDTO bankAccountDTO = new BankAccountDTO();
         bankAccountDTO.setAccountNumber(123L);
         bankAccountDTO.setAccountName("Dummy Account");
@@ -29,6 +29,7 @@ public class BankAccountBOImpl implements BankAccountBO{
         bankAccountDTO.setAccountType(AccountType.NOMINA);
         bankAccountDTO.setCountry("Mexico");
         bankAccountDTO.setAccountActive(isActive);
+        bankAccountDTO.setLastUsage(lastUsage);
         return bankAccountDTO;
     }
 }

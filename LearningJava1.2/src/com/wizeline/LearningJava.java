@@ -21,6 +21,9 @@ import com.wizeline.DTO.BankAccountDTO;
 import com.wizeline.DTO.ResponseDTO;
 import com.wizeline.DTO.UserDTO;
 
+import static com.wizeline.utils.Utils.isDateFormatValid;
+import static com.wizeline.utils.Utils.isPasswordValid;
+
 /**
  * @author Wizeline
  *
@@ -108,14 +111,30 @@ public class LearningJava {
 			if ("GET".equals(exchange.getRequestMethod())) {
 				LOGGER.info("LearningJava - Procesando peticion HTTP de tipo GET");
 				UserDTO user =  new UserDTO();
-				user = user.getParameters(splitQuery(exchange.getRequestURI()));
-				response = login(user.getUser(), user.getPassword());
-				if (response.getCode().equals(SUCCESS_CODE)) {
-					BankAccountDTO bankAccountDTO = getAccountDetails(user.getUser());
-					JSONObject json = new JSONObject(bankAccountDTO);
-					responseText = json.toString();
+				Map<String, String> params = splitQuery(exchange.getRequestURI());
+				user = user.getParameters(params);
+				// Valida formato del parametro fecha (date) [dd-mm-yyyy]
+				String lastUsage = params.get("date");
+				if (isDateFormatValid(lastUsage)) {
+					// Valida el password del usuario (password)
+					if (isPasswordValid(user.getPassword())) {
+						response = login(user.getUser(), user.getPassword());
+						if (response.getCode().equals(SUCCESS_CODE)) {
+							BankAccountDTO bankAccountDTO = getAccountDetails(user.getUser(), lastUsage);
+							JSONObject json = new JSONObject(bankAccountDTO);
+							responseText = json.toString();
+							exchange.getResponseHeaders().add("Content-type", "application/json");
+							exchange.sendResponseHeaders(200, responseText.getBytes().length);
+						}
+					} else {
+						responseText = "Password Incorrecto";
+						exchange.getResponseHeaders().add("Content-type", "application/json");
+						exchange.sendResponseHeaders(401, responseText.getBytes().length);
+					}
+				} else {
+					responseText = "Formato de Fecha Incorrecto";
 					exchange.getResponseHeaders().add("Content-type", "application/json");
-					exchange.sendResponseHeaders(200, responseText.getBytes().length);
+					exchange.sendResponseHeaders(400, responseText.getBytes().length);
 				}
 			} else {
 				/** 405 Method Not Allowed */
@@ -162,8 +181,8 @@ public class LearningJava {
 	    return query_pairs;
 	}
 
-	private static BankAccountDTO getAccountDetails(String user) {
+	private static BankAccountDTO getAccountDetails(String user, String lastUsage) {
 		BankAccountBO bankAccountBO = new BankAccountBOImpl();
-		return bankAccountBO.getAccountDetails(user);
+		return bankAccountBO.getAccountDetails(user, lastUsage);
 	}
 }

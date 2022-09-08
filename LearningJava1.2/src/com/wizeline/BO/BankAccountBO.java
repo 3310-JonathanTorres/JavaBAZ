@@ -12,5 +12,5 @@ import com.wizeline.DTO.BankAccountDTO;
  * Created by jose.vazquez on 07/09/22
  */
 public interface BankAccountBO {
-    BankAccountDTO getAccountDetails(String user);
+    BankAccountDTO getAccountDetails(String user, String lastUsage);
 }
