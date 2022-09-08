@@ -5,6 +5,8 @@
 
 package com.wizeline.DTO;
 
+import java.time.LocalDateTime;
+
 import com.wizeline.enums.AccountType;
 
 /**
@@ -27,7 +29,9 @@ public class BankAccountDTO {
 
     private boolean accountActive;
 
-    private String lastUsage;
+    private LocalDateTime creationDate;
+
+    private LocalDateTime lastUsage;
 
     public long getAccountNumber() {
         return accountNumber;
@@ -85,11 +89,17 @@ public class BankAccountDTO {
         this.accountActive = accountActive;
     }
 
-    public String getLastUsage() {
-        return lastUsage;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public void setLastUsage(String lastUsage) {
-        this.lastUsage = lastUsage;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
+
+    public LocalDateTime getLastUsage() {
+        return LocalDateTime.now();
+    }
+
+
 }

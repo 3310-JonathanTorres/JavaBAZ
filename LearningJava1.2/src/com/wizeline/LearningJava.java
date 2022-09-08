@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +108,7 @@ public class LearningJava {
 		// Consultar información de cuenta de un usuario
 		server.createContext("/api/getUserAccount", (exchange -> {
 			LOGGER.info("LearningJava - Inicia procesamiento de peticion ...");
+			Instant inicioDeEjecucion = Instant.now();
 			ResponseDTO response = new ResponseDTO();
 
 			String responseText = "";
@@ -143,11 +146,14 @@ public class LearningJava {
 				exchange.sendResponseHeaders(405, -1);
 			}
 			OutputStream output = exchange.getResponseBody();
+			Instant finalDeEjecucion = Instant.now();
 			/**
 			 * Always remember to close the resources you open.
 			 * Avoid memory leaks
 			 */
 			LOGGER.info("LearningJava - Cerrando recursos ...");
+			String total = new String(String.valueOf(Duration.between(inicioDeEjecucion, finalDeEjecucion).toMillis()).concat(" segundos."));
+			LOGGER.info("Tiempo de respuesta: ".concat(total));
 			output.write(responseText.getBytes());
 			output.flush();
 			output.close();
@@ -156,8 +162,8 @@ public class LearningJava {
 		// Consultar información de todas las cuentas
 		server.createContext("/api/getAccounts", (exchange -> {
 			LOGGER.info("LearningJava - Inicia procesamiento de peticion ...");
+			Instant inicioDeEjecucion = Instant.now();
 			BankAccountBO bankAccountBO = new BankAccountBOImpl();
-
 			String responseText = "";
 			/** Validates the type of http request  */
 			if ("GET".equals(exchange.getRequestMethod())) {
@@ -172,11 +178,14 @@ public class LearningJava {
 				exchange.sendResponseHeaders(405, -1);
 			}
 			OutputStream output = exchange.getResponseBody();
+			Instant finalDeEjecucion = Instant.now();
 			/**
 			 * Always remember to close the resources you open.
 			 * Avoid memory leaks
 			 */
 			LOGGER.info("LearningJava - Cerrando recursos ...");
+			String total = new String(String.valueOf(Duration.between(inicioDeEjecucion, finalDeEjecucion).toMillis()).concat(" segundos."));
+			LOGGER.info("Tiempo de respuesta: ".concat(total));
 			output.write(responseText.getBytes());
 			output.flush();
 			output.close();
